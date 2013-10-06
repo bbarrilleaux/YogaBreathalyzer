@@ -1,11 +1,12 @@
 
-// Yoga Breathalyzer
-#include "FastSPI_LED2.h" //library is here: http://code.google.com/p/fastspi/
+// Yoga Breathalyzer. Using Arduino, WS2812/Neopixel-style LED strip, and Modern Device wind sensor:http://moderndevice.com/product/wind-sensor/
+
+#include "FastSPI_LED2.h" //library for driving LED strips is here: http://code.google.com/p/fastspi/
 
 #define NUM_LEDS 120
-struct CRGB leds[NUM_LEDS];
+struct CRGB leds[NUM_LEDS]; //holds RGB values for the LEDs
 
-// set up max and min values for wind and temp sensors
+// set up max and min values for wind and temp sensors (both built into the Modern Device sensor)
 int windmin;
 int windmax;
 int tempmin;
@@ -13,9 +14,9 @@ int tempmax;
 
 
 void setup() {
-  LEDS.setBrightness(250);
-  LEDS.addLeds<WS2811, 5>(leds, NUM_LEDS);
-  colorFill(10,10,NUM_LEDS,leds);     //fill strip with color while waiting
+  LEDS.setBrightness(250); // reduce total brightness of LED strip to reduce power consumption
+  LEDS.addLeds<WS2811, 5>(leds, NUM_LEDS); // set up LED strip on pin 5
+  colorFill(10,10,NUM_LEDS,leds);     //fill strip with color while waiting to calibrate
   delay(10000);                       //wait 10 seconds for temp sensor to stabilize
    Serial.begin(9600);
   windmin = analogRead(A0); // calibrate wind sensor
@@ -26,13 +27,13 @@ void setup() {
 
 
 void loop() {
-  int windSensor = analogRead(A0); // wind sensor value
-  int tempSensor = analogRead(A2); // temp sensor value
+  int windSensor = analogRead(A0); // read wind sensor value
+  int tempSensor = analogRead(A2); // read temp sensor value
  Serial.print(windSensor);
  Serial.print("    ");
  Serial.println(tempSensor);
   
-  if(windSensor<windmin) windSensor=windmin;
+  if(windSensor<windmin) windSensor=windmin; // compress ends of scale to avoid going out of range
   if(windSensor>windmax) windSensor=windmax;
 
   if(tempSensor<tempmin) tempSensor=tempmin;
