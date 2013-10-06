@@ -1,6 +1,6 @@
 
-// code for LED strips
-#include "FastSPI_LED2.h"
+// Yoga Breathalyzer
+#include "FastSPI_LED2.h" //library is here: http://code.google.com/p/fastspi/
 
 #define NUM_LEDS 120
 struct CRGB leds[NUM_LEDS];
@@ -15,17 +15,19 @@ int tempmax;
 void setup() {
   LEDS.setBrightness(250);
   LEDS.addLeds<WS2811, 5>(leds, NUM_LEDS);
+  colorFill(10,10,NUM_LEDS,leds);     //fill strip with color while waiting
+  delay(10000);                       //wait 10 seconds for temp sensor to stabilize
    Serial.begin(9600);
-  windmin = analogRead(A0); // wind sensor value
-  windmax = windmin+300;
-  tempmax = analogRead(A1); // temp sensor value
-  tempmin = tempmax - 30;
+  windmin = analogRead(A0); // calibrate wind sensor
+  windmax = windmin+300;    //this is a reasonable range....
+  tempmax = analogRead(A2); // calibrate temp sensor
+  tempmin = tempmax - 30;   //this is a reasonable range....
 }
 
 
 void loop() {
   int windSensor = analogRead(A0); // wind sensor value
-  int tempSensor = analogRead(A1); // temp sensor value
+  int tempSensor = analogRead(A2); // temp sensor value
  Serial.print(windSensor);
  Serial.print("    ");
  Serial.println(tempSensor);
