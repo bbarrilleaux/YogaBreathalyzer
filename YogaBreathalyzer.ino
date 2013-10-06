@@ -17,7 +17,13 @@ int tempmax;
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int sensorPin = 5; // palm temp sensor pin
 
-
+// SMOOTHING: Define the number of samples for smoothing the sensor signal for the palm temperature. 
+int reading=0;
+const int numReadings = 20;
+int index = 0;                  // the index of the current reading
+int readings[numReadings] = {0};  // array to hold the sensor values, for each sensor
+int total = 0;                  // the running total for each sensor
+int average=0;
 
 void setup() {
   //Set up LED strip:
@@ -35,7 +41,6 @@ void setup() {
   
    // set up the LCD's number of columns and rows: 
   lcd.begin(16, 2);
- 
 }
 
 
@@ -57,19 +62,31 @@ void loop() {
     memset(leds, 0,  NUM_LEDS * sizeof(struct CRGB));
    }
   
-  //Palm temperature sensor:
- int reading = analogRead(sensorPin);  
- float voltage = reading * 5.0;
+   //Palm temperature sensor:
+   reading = analogRead(sensorPin);  
+    //time smoothing
+    total= total - readings[index];         
+    readings[index] = reading;   // put sensor reading into array:  
+    total= total + readings[index];   // add the reading to the total:
+    average = total / numReadings;   // calculate the average:  
+ 
+ 
+ float voltage = average * 5;
  voltage /= 1024.0; 
  float temperatureC = (voltage - 0.5) * 100 ;  //converting from 10 mv per degree wit 500 mV offset
                                                //to degrees ((voltage - 500mV) times 100) 
  // now convert to Fahrenheit
  float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
  //print out palm temperature on the LCD screen
+  if(index==0)
+  {
   lcd.setCursor(0, 0);
   lcd.print(temperatureC);lcd.print(" C    ");
   lcd.setCursor(0, 1);
   lcd.print(temperatureF);lcd.print(" F    ");
+  }
+    index++;
+   if(index>=numReadings) index=0;
 
 }
  
