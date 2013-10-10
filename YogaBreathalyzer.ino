@@ -1,5 +1,6 @@
 
-// Yoga Breathalyzer. Using Arduino, WS2812/Neopixel-style LED strip, and Modern Device wind sensor:http://moderndevice.com/product/wind-sensor/
+// Yoga Breathalyzer. Using Arduino, WS2812/Neopixel-style LED strip, and Modern Device wind/temp sensor:http://moderndevice.com/product/wind-sensor/
+// Also uses a separate, second temp sensor (temp2) whose output is displayed on an LCD screen.
 
 #include "FastSPI_LED2.h" //library for driving LED strips is here: http://code.google.com/p/fastspi/
 #include <LiquidCrystal.h> //library for driving LCD screen
@@ -16,7 +17,7 @@ int tempmax;
 
 //for the LCD screen, initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-int sensorPin = 5; // temp2 sensor pin
+int sensorPin = 5; // temp2 sensor pin = A5
 
 // SMOOTHING: Define the number of samples for smoothing the sensor signal for the temp2 sensor
 int reading=0;
@@ -29,15 +30,15 @@ int average=0;
 void setup() {
   //Set up LED strip:
   LEDS.setBrightness(250); // reduce total brightness of LED strip to reduce power consumption
-  LEDS.addLeds<WS2811, 6>(leds, NUM_LEDS); // set up LED strip on pin 5
+  LEDS.addLeds<WS2811, 6>(leds, NUM_LEDS); // set up LED strip on digital pin 6
   
   //Calibrate wind sensor:
   colorFill(10,10,NUM_LEDS,leds);     //fill strip with color while waiting to calibrate
   delay(10000);                       //wait 10 seconds for temp sensor to stabilize
   Serial.begin(9600);
-  windmin = analogRead(A0); // calibrate wind sensor
+  windmin = analogRead(A0); // calibrate wind sensor on analog pin A0
   windmax = windmin+300;    //this is a reasonable range....
-  tempmax = analogRead(A2); // calibrate temp1 sensor
+  tempmax = analogRead(A2); // calibrate temp1 sensor on analog pin A2
   tempmin = tempmax - 30;   //this is a reasonable range....
   
    // set up the LCD's number of columns and rows: 
