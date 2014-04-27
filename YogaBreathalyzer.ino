@@ -1,8 +1,7 @@
-
 // Yoga Breathalyzer. Using Arduino, WS2812/Neopixel-style LED strip, and Modern Device wind/temp sensor:http://moderndevice.com/product/wind-sensor/
 // Also uses a separate, second temp sensor (temp2) whose output is displayed on an LCD screen.
 
-#include "FastSPI_LED2.h" //library for driving LED strips is here: http://code.google.com/p/fastspi/
+#include "FastLED.h" //library for driving LED strips is here: http://fastled.io
 #include <LiquidCrystal.h> //library for driving LCD screen
 
 //set up LED strip
